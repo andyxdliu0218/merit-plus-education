@@ -6,138 +6,137 @@ Live Website: https://meritpluseducation.com
 
 ## Purpose
 
-The purpose of Merit Plus Education is to centralize student support and academic management by providing:
+Centralize student support and academic management by providing:
 
-Real-time inquiry support for visitors
-
-Structured homework submission and grading workflows
-
-Role-based academic reporting and student management
+- Real-time inquiry support for visitors
+- Structured homework submission and grading workflows
+- Role-based academic reporting and student management
+- Assessment, objective, and career planning tools
 
 ## User Roles & Capabilities
 
-Visitor
+**Visitor**
 
-Interact with support in real time for inquiries
+- Interact with support in real time via live chat
+- No authentication required
 
-No authentication required
+**Student**
 
-Student
+- Secure login
+- Submit and view homework assignments, grades, and feedback
+- Take timed online assessments
+- View academic and behavioral reports
+- Manage personal objectives and weekly plans
+- View student events and to-do items
+- Complete behavioral, career, and student behavior assessments
+- Explore schools and career wage data
+- Chat with an AI learning assistant
 
-Secure login
+**Teaching Assistant (TA)**
 
-Submit homework assignments
+- Secure login
+- Create student accounts
+- Create, assign, and grade homework
+- Create academic reports for assigned students
+- View assessment results and behavioral profiles
+- Manage objectives and contracts for assigned students
 
-View homework grades, feedback, and scores
+**Administrator**
 
-View academic reports created by TA or admin
-
-Manage a personal to-do list
-
-View homework assigned by their TA or admin
-
-Teaching Assistant (TA)
-
-Secure login
-
-Create student accounts
-
-Create homework assignments
-
-Assign homework to students assigned by an admin
-
-Grade homework with feedback and scores
-
-Create academic reports for students assigned to them
-
-Administrator
-
-Full system access
-
-Create and manage TA and student accounts
-
-Assign students to TAs
-
-Assign homework to students
-
-Grade homework with feedback and scores
-
-Create academic reports for any student
-
-Oversee overall system operations
+- Full system access
+- Create and manage TA and student accounts
+- Assign students to TAs
+- Assign and grade homework
+- Create academic reports for any student
+- Manage assessments, announcements, contracts, and weekly plans
+- View platform-wide stats and click tracking reports
+- Accept live chat requests from visitors
 
 ## Key Features
 
 - Role-based UI and access control (Visitor, Student, TA, Admin)
-- Real-time live chat for visitor inquiries using WebSocket
+- Real-time live chat for visitor inquiries using WebSocket (STOMP)
 - Homework creation, assignment, submission, grading, and feedback
+- Timed online assessments with auto-grading support
+- Behavioral, career, and student behavior profile assessments
 - Student performance reports with scores and comments
-- Email notifications for:
-  - Next-day appointment reminders (scheduled)
-  - Homework assignment notifications
+- Objective tracking with start/end dates
+- Weekly planner for students (staff can review and annotate)
+- Contract management with signed document upload (AWS S3)
+- School explorer with U.S. College Scorecard data
+- Career wage data sourced from the Bureau of Labor Statistics API
+- Platform-wide overview stats and per-student/instructor stats
+- Announcement system with activate/deactivate controls
+- SMS notifications with student consent tracking
+- Button click tracking with scheduled email reports to admin
+- Email notifications for next-day event reminders and homework assignments
+- AI learning assistant with streaming responses, voice input (Web Speech API), and built-in TTS readout
+- Bilingual UI (English / Chinese) via i18n
 - Secure authentication and authorization using JWT
 - Responsive UI for desktop and mobile devices
 
 ## Tech Stack
 
-Frontend
+**Frontend**
 
-React
+- React
+- Ant Design
+- Redux
+- React Router
+- i18n (en / zh)
+- SCSS
+- dayjs
+- STOMP.js (WebSocket live chat)
 
-Ant Design
+**Backend**
 
-HTML5 / CSS3
+- Spring Boot
+- Spring Data JDBC
+- MySQL
+- WebSocket / STOMP (real-time chat)
+- RESTful APIs
 
-## Backend
+**Infrastructure**
 
-Spring Boot
+- AWS EC2
+- AWS S3 (signed document storage)
+- Docker
+- Nginx
+- Cloudflare (WAF, DDoS mitigation, rate limiting)
+- Let's Encrypt (SSL)
 
-MySQL
+**External Integrations**
 
-WebSocket (real-time inquiry chat)
-
-RESTful APIs
-
-## Infrastructure
-
-AWS EC2
-
-Docker
-
-Nginx
-
-Cloudflare
-
-Let's Encrypt (SSL)
+- U.S. College Scorecard API — school tuition/admissions data
+- Bureau of Labor Statistics (BLS) API — career wage data
+- SMTP email — event reminders, inquiry notifications, click reports
+- SMS — student notifications with consent tracking
 
 ## Architecture Overview
 
-- The frontend communicates with backend services via RESTful APIs
-- Authentication is handled using JWT (JSON Web Token)
-- Role-based authorization is enforced using JWT claims
-- Real-time visitor inquiries are handled through WebSocket connections
+- Frontend communicates with the backend via RESTful APIs
+- Authentication is handled using JWT (stored in Authorization header)
+- Role-based authorization is enforced via JWT claims and backend interceptors
+- Real-time visitor chat is handled through STOMP over WebSocket connections
 - Spring Boot manages business logic, authentication, and authorization
-- MySQL is used for persistent data storage (users, homework, reports)
-- Email notifications are sent automatically when homework is assigned to a student
-- Scheduled Appointment reminder emails are sent one day in advance
-- Notification logic is handled by backend services to ensure reliability
+- MySQL is used for persistent data storage (users, homework, reports, assessments, etc.)
+- Soft-delete pattern (`is_deleted`) is used across most tables
+- Scheduled backend jobs handle: daily event reminder emails, button click reports every 2 days, and weekly cleanup of excess profile assessment records
+- Contract signed documents are stored in AWS S3
 - Nginx acts as a reverse proxy and SSL terminator
 - The application is containerized using Docker
-- Cloudflare provides Web Application Firewall (WAF) and DDoS mitigation
-- Rate limiting and bot protection are handled at the edge
+- Cloudflare provides WAF and DDoS mitigation at the edge
 
 ## Security
 
 - HTTPS enforced across the platform
-- JWT (JSON Web Token) based authentication
-- Role-based access control (RBAC) enforced via JWT claims
-- Secure REST API authorization using JWT validation
-- Cloudflare WAF and DDoS protection at the edge
+- JWT-based authentication and authorization
+- Role-based access control (RBAC) enforced via JWT claims on every endpoint
 - WebSocket connections secured using authenticated JWT sessions
-- Sensitive credentials managed using environment variables
+- Cloudflare WAF and DDoS protection at the edge
+- Sensitive credentials managed via environment variables
 - No sensitive data exposed on the client side
 
-
-
+---
 
 🔒 Source code is private. Available upon request.
